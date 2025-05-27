@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    image: ilenisnerd/docker-project-backend:latest
+    container_name: momo-backend
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+    read_only: true
+
+  frontend:
+    build:
+      context: ./frontend
+    image: ilenisnerd/docker-project-frontend:latest
+    container_name: momo-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    volumes:
+      - nginx-logs:/var/log/nginx:rw
+
+networks:
+  app-network:
+    name: app-network
+    driver: bridge

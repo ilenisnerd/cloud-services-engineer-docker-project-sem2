@@ -11,6 +11,11 @@ RUN npm ci
 # Копируем исходный код
 COPY . .
 
+# Устанавливаем переменные окружения
+ENV NODE_ENV=production
+ENV VUE_APP_API_URL=/api
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 # Сборка приложения
 RUN npm run build
 
