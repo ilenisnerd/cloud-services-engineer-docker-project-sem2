@@ -31,4 +31,4 @@ USER nonroot
 EXPOSE 8081
 
 # Команда для запуска приложения
-CMD ["./backend"]
+ENTRYPOINT ["./backend"]
