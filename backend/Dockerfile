@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/backend .
 
 RUN adduser -D -s /sbin/nologin nonroot && \
-    chown nonroot:nonroot /backend && chmod +x /backend
+    chown nonroot:nonroot /app/backend && chmod +x /app/backend
 
 # Указываем пользователя без привилегий для повышения безопасности
 USER nonroot
