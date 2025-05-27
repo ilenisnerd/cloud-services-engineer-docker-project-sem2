@@ -30,3 +30,7 @@ networks:
   app-network:
     name: app-network
     driver: bridge
+
+volumes:
+  nginx-logs:
+    name: momo-nginx-logs
