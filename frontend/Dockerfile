@@ -28,8 +28,13 @@ COPY --from=builder /app/dist /usr/share/nginx/html/momo-store
 # Копируем кастомную конфигурацию Nginx (если есть)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+RUN adduser -D -s /sbin/nologin nonroot && \
+    mkdir -p /tmp/nginx && \
+    sed -i 's|pid .*;|pid /tmp/nginx/nginx.pid;|' /etc/nginx/nginx.conf && \
+    chown -R nonroot /var/cache/nginx /var/log/nginx /tmp/nginx
+
 # Указываем пользователя без привилегий
-USER nginx
+USER nonroot
 
 # Открываем порт
 EXPOSE 80

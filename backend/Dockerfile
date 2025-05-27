@@ -21,8 +21,11 @@ WORKDIR /app
 # Копируем скомпилированный бинарник из предыдущего этапа
 COPY --from=builder /app/backend .
 
+RUN adduser -D -s /sbin/nologin nonroot && \
+    chown nonroot:nonroot /backend && chmod +x /backend
+
 # Указываем пользователя без привилегий для повышения безопасности
-USER nobody
+USER nonroot
 
 # Открываем порт, на котором работает приложение
 EXPOSE 8081
