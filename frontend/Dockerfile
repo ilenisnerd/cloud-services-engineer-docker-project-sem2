@@ -40,4 +40,4 @@ USER nonroot
 EXPOSE 80
 
 # Запускаем Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
