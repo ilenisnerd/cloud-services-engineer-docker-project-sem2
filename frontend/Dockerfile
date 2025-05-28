@@ -1,45 +1,23 @@
-# Этап 1: Сборка приложения
-FROM node:18-alpine AS builder
+FROM node:16-alpine AS build
 
-# Рабочая директория
 WORKDIR /app
-
-# Копируем package.json и package-lock.json для кэширования зависимостей
 COPY package*.json ./
 RUN npm ci
-
-# Копируем исходный код
 COPY . .
-
-# Устанавливаем переменные окружения
 ENV NODE_ENV=production
 ENV VUE_APP_API_URL=/api
-ENV NODE_OPTIONS=--openssl-legacy-provider
-
-# Сборка приложения
 RUN npm run build
 
-# Этап 2: Финальный образ с Nginx
+
 FROM nginx:1.25-alpine
-
-# Копируем собранные статические файлы
-COPY --from=builder /app/dist /usr/share/nginx/html/momo-store
-
-# Копируем кастомную конфигурацию Nginx (если есть)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+COPY --from=build /app/dist /usr/share/nginx/html/momo-store
 RUN adduser -D -s /sbin/nologin nonroot && \
     mkdir -p /tmp/nginx && \
     sed -i 's|pid .*;|pid /tmp/nginx/nginx.pid;|' /etc/nginx/nginx.conf && \
     chown -R nonroot /var/cache/nginx /var/log/nginx /tmp/nginx
-
-# Указываем пользователя без привилегий
 USER nonroot
-
-# Открываем порт
 EXPOSE 80
 
-# Запускаем Nginx
-# CMD ["nginx", "-g", "daemon off;"]
 HEALTHCHECK --interval=20s --timeout=3s --start-period=5s --retries=3 \
     CMD wget -qO- http://127.0.0.1/ || exit 1
