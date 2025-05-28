@@ -12,10 +12,14 @@ RUN npm run build
 FROM nginx:1.25-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html/momo-store
+
 RUN adduser -D -s /sbin/nologin nonroot && \
-    mkdir -p /tmp/nginx && \
+    mkdir -p /tmp/nginx \
+             /var/cache/nginx/client_temp \
+             /var/cache/nginx/proxy_temp && \
     sed -i 's|pid .*;|pid /tmp/nginx/nginx.pid;|' /etc/nginx/nginx.conf && \
     chown -R nonroot /var/cache/nginx /var/log/nginx /tmp/nginx
+
 USER nonroot
 EXPOSE 80
 
