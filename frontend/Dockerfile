@@ -28,8 +28,8 @@ RUN apk update && \
     apk add --no-cache curl
 
 # Создание непривилегированной группы и пользователя
-RUN addgroup -g 1001 -S appgroup && \
-    adduser -u 1001 -S appuser -G appgroup
+# RUN addgroup -g 1001 -S appgroup && \
+#    adduser -u 1001 -S appuser -G appgroup
 
 # Копирование nginx
 COPY --chown=appuser:appgroup nginx.conf /etc/nginx/conf.d/default.conf
@@ -37,11 +37,18 @@ COPY --chown=appuser:appgroup nginx.conf /etc/nginx/conf.d/default.conf
 # Копирование скомпилированного приложения (build)
 COPY --from=builder --chown=appuser:appgroup /app/dist /usr/share/nginx/html
 # Установка прав
-RUN chown -R appuser:appgroup /var/cache/nginx && \
-    chown -R appuser:appgroup /var/log/nginx && \
-    chown -R appuser:appgroup /etc/nginx/conf.d && \
+RUN apk update && \
+    apk add --no-cache curl &&\
+    addgroup -g 1001 -S appgroup && \
+    adduser -u 1001 -S appuser -G root &&\
+    chown -R appuser:root /var/cache/nginx && \
+    chown -R appuser:root /var/log/nginx && \
+    chown -R appuser:root /etc/nginx/conf.d && \
     touch /var/run/nginx.pid && \
-    chown -R appuser:appgroup /var/run/nginx.pid
+    chown -R appuser:root /var/run/nginx.pid &&\
+    chown -R appuser:root /etc/nginx &&\
+    chown -R appuser:root /tmp
+
 
 USER appuser
 
