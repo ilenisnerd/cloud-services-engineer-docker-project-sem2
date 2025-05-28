@@ -10,6 +10,11 @@ services:
     networks:
       - app-network
     read_only: true
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 128M
 
   frontend:
     build:
@@ -23,12 +28,17 @@ services:
       - backend
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 256M
     volumes:
       - nginx-logs:/var/log/nginx:rw
 
 networks:
   app-network:
-    name: app-network
+    name: momo-app-network
     driver: bridge
 
 volumes:

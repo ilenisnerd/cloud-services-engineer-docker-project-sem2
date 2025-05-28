@@ -29,8 +29,9 @@ COPY --from=builder /app/dist /usr/share/nginx/html/momo-store
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN adduser -D -s /sbin/nologin nonroot && \
-    mkdir -p /var/cache/nginx /var/log/nginx /tmp/nginx && \
-    chown -R nonroot:nonroot /var/cache/nginx /var/log/nginx /tmp/nginx
+    mkdir -p /tmp/nginx && \
+    sed -i 's|pid .*;|pid /tmp/nginx/nginx.pid;|' /etc/nginx/nginx.conf && \
+    chown -R nonroot /var/cache/nginx /var/log/nginx /tmp/nginx
 
 # Указываем пользователя без привилегий
 USER nonroot
@@ -39,4 +40,6 @@ USER nonroot
 EXPOSE 80
 
 # Запускаем Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
+HEALTHCHECK --interval=20s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget -qO- http://127.0.0.1/ || exit 1
