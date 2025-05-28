@@ -3,7 +3,7 @@ FROM node:18-alpine AS builder
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache python3 make g++
-
+ENV DOCKER_CONTENT_TRUST=1
 WORKDIR /app
 
 COPY package*.json ./
@@ -21,6 +21,8 @@ RUN npm run build
 # Минимальный образ
 FROM nginx:1.25-alpine
 
+ENV DOCKER_CONTENT_TRUST=1
+
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache curl
@@ -34,7 +36,6 @@ COPY --chown=appuser:appgroup nginx.conf /etc/nginx/conf.d/default.conf
 
 # Копирование скомпилированного приложения (build)
 COPY --from=builder --chown=appuser:appgroup /app/dist /usr/share/nginx/html
-
 # Установка прав
 RUN chown -R appuser:appgroup /var/cache/nginx && \
     chown -R appuser:appgroup /var/log/nginx && \
