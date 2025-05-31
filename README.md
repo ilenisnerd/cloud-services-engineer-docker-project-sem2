@@ -7,5 +7,5 @@
 ```
 git clone https://github.com/ilenisnerd/cloud-services-engineer-docker-project-sem2.git
 cd cloud-services-engineer-docker-project-sem2
-docker compose up
+docker-compose up
 ```
