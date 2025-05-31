@@ -13,13 +13,13 @@ FROM nginx:1.25-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html/momo-store
 
-RUN adduser -D -s /sbin/nologin nonroot && \
-    mkdir -p /tmp/nginx/client_temp /tmp/nginx/proxy_temp && \
-    sed -i 's|pid .*;|pid /tmp/nginx/nginx.pid;|' /etc/nginx/nginx.conf && \
-    chown -R nonroot /tmp/nginx
+# Создаем необходимые директории
+RUN mkdir -p /tmp/nginx && \
+    chown -R nginx:nginx /tmp/nginx && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/run
 
-
-USER nonroot
+USER nginx
 EXPOSE 80
 
 HEALTHCHECK --interval=20s --timeout=3s --start-period=5s --retries=3 \
