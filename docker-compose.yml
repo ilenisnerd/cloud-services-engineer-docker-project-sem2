@@ -8,13 +8,16 @@ services:
     ports:
       - "8081:8081"
     networks:
-      - app-network
+      - momo-network
     read_only: true
     deploy:
       resources:
         limits:
           cpus: '0.4'
           memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
   frontend:
     build:
@@ -27,18 +30,21 @@ services:
     depends_on:
       - backend
     networks:
-      - app-network
+      - momo-network
     deploy:
       resources:
         limits:
           cpus: '0.4'
           memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
     volumes:
       - nginx-logs:/var/log/nginx:rw
 
 networks:
-  app-network:
-    name: momo-app-network
+  momo-network:
+    name: momo-network
     driver: bridge
 
 volumes:
